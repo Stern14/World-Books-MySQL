@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script defer src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+    <title>{% block title %}{% endblock title %}</title>
+</head>
+<body>
+    <div class="container-fluid p-1 bg-primary text-white text-center">
+        <div class="row">
+            <div class="col-2 text-start">
+                <img src="{% static 'images/head.png' %}" width = 120 height = 70>
+            </div>
+            <div class="col-10">
+                <h1>Мир книг - печатные и электронные книги</h1>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row bg-warning text-center">
+            <h6>
+                <a href="{% url 'index' %}">Главная страница</a>
+                <a href="{% url 'about' %}">О компании</a>
+                <a href="{% url 'contact' %}">Контакты</a>
+            </h6>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row text-center text-primary fs-1 fw-bold">
+            <div>
+                {% block header %}
+                {% endblock header %}
+            </div>
+        </div>
+        <div class="row text-center text-body">
+            <div class="col-2">
+                {% block sidebar %}
+                <nav class="nav flex-column">
+                    <a href="{% url 'books-list' %}" class="nav-link">Все книги</a>
+                    <a href="{% url 'authors-list' %}" class="nav-link">Все авторы</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'logout' %}?next={{request.path}}" class="nav-link">Выход</a>
+                        <div>Boшeл: {{user.get_username}}</div>
+                        <a href="{% url 'edit_authors' %}" class="nav-link">Редактор авторов</a>
+                        <a href="{% url 'edit_books' %}" class="nav-link">Редактор книг</a>
+                        <a href="{% url 'my-borrowed' %}" class="nav-link">Мои заказы</a>
+                    {% else %}
+                        <a href="{% url 'login' %}?next={{request.path}}" class="nav-link">Вход</a>
+                    {% endif %}
+                </nav>
+                {% endblock sidebar %}
+            </div>
+            <div class="col-10">
+                <div class="row text-center">
+                    {% block content %}
+                    {% endblock content %}
+                    <div class="pagination">
+                        <span class="step-links">
+                            {% if page_obj.paginator.num_pages > 1 %}
+                                {% if page_obj.has_previous %}
+                                    <a href="?page=1">&laquo; Первая</a>
+                                    <a href="?page={{page_obj.previous_page_number}}">Предыдущая</a>
+                                {% endif %}
+
+                                <span class="current">
+                                    Стр. {{page_obj.number}} из {{page_obj.paginator.num_pages}}
+                                </span>
+                                {% if page_obj.has_next %}
+                                    <a href="?page={{page_obj.next_page_number}}">Следующая</a>
+                                    <a href="?page={{page_obj.paginator.num_pages}}">Последняя &raquo;</a>
+                                {% endif %}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row bg-info text-center text-dark small lh-sm pt-2 my-2">
+            {% block footer %}
+                <p>Copyright OOO "Интелпектуальные информационные системы", 2023. Все права защищены!</p>
+            {% endblock footer %}
+        </div>
+    </div>
+</body>
+</html>
